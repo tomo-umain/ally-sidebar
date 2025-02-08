@@ -14,7 +14,7 @@ interface AccessibilityCategoryProps {
 }
 
 interface AccessibilityViolationProps {
-  severity: "error" | "warning" | "info";
+  severity: "error" | "warning";
   message: string;
   element?: string;
   outerHTML?: string;
@@ -25,11 +25,10 @@ interface AccessibilityViolationProps {
 const severityClasses = {
   error: "bg-red-50/90 border-red-200 text-red-700",
   warning: "bg-yellow-50/90 border-yellow-200 text-yellow-700",
-  info: "bg-blue-50/90 border-blue-200 text-blue-700",
 };
 
 interface AccessibilityIssue {
-  severity: "error" | "warning" | "info";
+  severity: "error" | "warning";
   message: string;
   element: string;
   outerHTML?: string;
