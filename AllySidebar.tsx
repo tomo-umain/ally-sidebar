@@ -1,5 +1,5 @@
-'use client';
-import { ReactNode, useState } from 'react';
+"use client";
+import { ReactNode, useState } from "react";
 
 interface AccessibilitySidebarProps {
   className?: string;
@@ -14,7 +14,7 @@ interface AccessibilityCategoryProps {
 }
 
 interface AccessibilityViolationProps {
-  severity: 'error' | 'warning' | 'info';
+  severity: "error" | "warning" | "info";
   message: string;
   element?: string;
   innerHTML?: string;
@@ -23,13 +23,13 @@ interface AccessibilityViolationProps {
 }
 
 const severityClasses = {
-  error: 'bg-red-50/90 border-red-200 text-red-700',
-  warning: 'bg-yellow-50/90 border-yellow-200 text-yellow-700',
-  info: 'bg-blue-50/90 border-blue-200 text-blue-700',
+  error: "bg-red-50/90 border-red-200 text-red-700",
+  warning: "bg-yellow-50/90 border-yellow-200 text-yellow-700",
+  info: "bg-blue-50/90 border-blue-200 text-blue-700",
 };
 
 interface AccessibilityIssue {
-  severity: 'error' | 'warning' | 'info';
+  severity: "error" | "warning" | "info";
   message: string;
   element: string;
   innerHTML?: string;
@@ -42,10 +42,10 @@ interface AccessibilityReport {
   structure: AccessibilityIssue[];
 }
 
-type AccessibilityCategory = 'aria' | 'structure';
+type AccessibilityCategory = "aria" | "structure";
 
 const checkAccessibility = (
-  category?: AccessibilityCategory,
+  category?: AccessibilityCategory
 ): AccessibilityReport => {
   const issues: AccessibilityReport = {
     aria: [],
@@ -53,46 +53,46 @@ const checkAccessibility = (
   };
 
   // Only run the requested category check if specified
-  if (!category || category === 'aria') {
+  if (!category || category === "aria") {
     // Batch all ARIA-related DOM queries
     const interactiveElements = document.querySelectorAll(
-      'button, a, input, [role]',
+      "button, a, input, [role]"
     );
 
-    const images = document.querySelectorAll('img');
-    const formControls = document.querySelectorAll('input, select, textarea');
-    const labels = Array.from(document.querySelectorAll('label'));
+    const images = document.querySelectorAll("img");
+    const formControls = document.querySelectorAll("input, select, textarea");
+    const labels = Array.from(document.querySelectorAll("label"));
 
     interactiveElements.forEach((element) => {
       const el = element as HTMLElement;
       if (
-        (el.tagName === 'BUTTON' ||
-          el.tagName === 'A' ||
-          el.hasAttribute('role')) &&
-        !el.hasAttribute('aria-label') &&
-        !el.hasAttribute('aria-labelledby') &&
+        (el.tagName === "BUTTON" ||
+          el.tagName === "A" ||
+          el.hasAttribute("role")) &&
+        !el.hasAttribute("aria-label") &&
+        !el.hasAttribute("aria-labelledby") &&
         !el.textContent?.trim()
       ) {
         issues.aria.push({
-          severity: 'error',
-          message: 'Interactive element missing accessible name',
+          severity: "error",
+          message: "Interactive element missing accessible name",
           element: `<${el.tagName.toLowerCase()}>`,
           innerHTML: el.innerHTML,
-          impact: 'Critical - Screen readers cannot identify the purpose',
-          help: 'Add aria-label, aria-labelledby, or visible text content',
+          impact: "Critical - Screen readers cannot identify the purpose",
+          help: "Add aria-label, aria-labelledby, or visible text content",
         });
       }
     });
 
     images.forEach((img) => {
-      if (!img.hasAttribute('alt')) {
+      if (!img.hasAttribute("alt")) {
         issues.aria.push({
-          severity: 'error',
-          message: 'Image missing alt text',
-          element: '<img>',
+          severity: "error",
+          message: "Image missing alt text",
+          element: "<img>",
           innerHTML: img.innerHTML,
-          impact: 'Critical - Screen readers cannot describe the image',
-          help: 'Add alt attribute to provide image description',
+          impact: "Critical - Screen readers cannot describe the image",
+          help: "Add alt attribute to provide image description",
         });
       }
     });
@@ -100,23 +100,23 @@ const checkAccessibility = (
     formControls.forEach((input) => {
       const hasLabel = labels.some((label) => label.htmlFor === input.id);
 
-      if (!hasLabel && !input.hasAttribute('aria-label')) {
+      if (!hasLabel && !input.hasAttribute("aria-label")) {
         issues.aria.push({
-          severity: 'error',
-          message: 'Form control missing label',
+          severity: "error",
+          message: "Form control missing label",
           element: `<${input.tagName.toLowerCase()}>`,
           innerHTML: input.innerHTML,
-          impact: 'Critical - Screen readers cannot identify the input purpose',
+          impact: "Critical - Screen readers cannot identify the input purpose",
           help: 'Add a label element with matching "for" attribute or aria-label',
         });
       }
     });
   }
 
-  if (!category || category === 'structure') {
+  if (!category || category === "structure") {
     // Batch check heading structure
     const headings = Array.from(
-      document.querySelectorAll('h1, h2, h3, h4, h5, h6'),
+      document.querySelectorAll("h1, h2, h3, h4, h5, h6")
     );
 
     headings.forEach((heading, index) => {
@@ -125,11 +125,11 @@ const checkAccessibility = (
         const prevLevel = parseInt(headings[index - 1].tagName[1]);
         if (currentLevel > prevLevel + 1) {
           issues.structure.push({
-            severity: 'warning',
-            message: 'Skipped heading level',
+            severity: "warning",
+            message: "Skipped heading level",
             element: `<${heading.tagName.toLowerCase()}>`,
             innerHTML: heading.innerHTML,
-            impact: 'Moderate - Document structure may be confusing',
+            impact: "Moderate - Document structure may be confusing",
             help: `Don't skip heading levels. Expected h${
               prevLevel + 1
             }, found h${currentLevel}`,
@@ -192,15 +192,9 @@ export function AccessibilityCategory({
   children,
   defaultOpen = false,
 }: AccessibilityCategoryProps) {
-  const [isOpen, setIsOpen] = useState(defaultOpen);
-
   return (
     <div className="border-b border-gray-200 last:border-0 pt-4">
-      <div
-        className={`grid transition-all duration-200 ${
-          isOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'
-        }`}
-      >
+      <div className={`grid transition-all duration-200`}>
         <div className="overflow-hidden">
           <div className="p-4 pt-0">
             <h1 className="pb-4">{title}</h1>
@@ -246,26 +240,26 @@ export function AccessibilitySidebar({ className }: AccessibilitySidebarProps) {
 
   const totalIssues = Object.values(violations).reduce(
     (acc, curr) => acc + curr.length,
-    0,
+    0
   );
 
-  const categories = ['aria', 'structure'] as AccessibilityCategory[];
+  const categories = ["aria", "structure"] as AccessibilityCategory[];
 
   return (
     <div
       id="accessibility-sidebar"
       className={`fixed z-[100] right-0 top-0 flex h-screen transform transition-transform duration-300 ${
-        isOpen ? 'translate-x-0' : 'translate-x-full'
+        isOpen ? "translate-x-0" : "translate-x-full"
       } ${className}`}
     >
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="absolute -left-[30px] top-4 flex items-center justify-center rounded-l-lg bg-black shadow-lg text-white transition-colors px-10 py-2"
         aria-label={
-          isOpen ? 'Close accessibility sidebar' : 'Open accessibility sidebar'
+          isOpen ? "Close accessibility sidebar" : "Open accessibility sidebar"
         }
       >
-        {isOpen ? '>' : '<'}
+        {isOpen ? ">" : "<"}
       </button>
 
       <div className="h-full overflow-hidden bg-white shadow-xl w-96">
@@ -275,11 +269,11 @@ export function AccessibilitySidebar({ className }: AccessibilitySidebarProps) {
             <p className="mt-1 text-sm text-gray-600">
               {hasRun && (
                 <>
-                  Found{' '}
+                  Found{" "}
                   <span className="rounded-full bg-red-200 px-2 py-0.5 text-xs font-medium text-gray-600">
                     {totalIssues}
-                  </span>{' '}
-                  total {totalIssues === 1 ? 'issue' : 'issues'} to address
+                  </span>{" "}
+                  total {totalIssues === 1 ? "issue" : "issues"} to address
                 </>
               )}
             </p>
@@ -296,7 +290,7 @@ export function AccessibilitySidebar({ className }: AccessibilitySidebarProps) {
             {showButton.aria && (
               <div className="mb-3">
                 <button
-                  onClick={() => runCategoryCheck('aria')}
+                  onClick={() => runCategoryCheck("aria")}
                   className="w-full rounded border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                 >
                   Run Aria Checks
@@ -306,7 +300,7 @@ export function AccessibilitySidebar({ className }: AccessibilitySidebarProps) {
             {violations.aria.map(
               (violation: AccessibilityViolationProps, index) => (
                 <AccessibilityViolation key={index} {...violation} />
-              ),
+              )
             )}
           </AccessibilityCategory>
 
@@ -315,11 +309,10 @@ export function AccessibilitySidebar({ className }: AccessibilitySidebarProps) {
             count={violations.structure.length}
             hasRun={hasRun.structure}
           >
-            <div>hello</div>
             {showButton.structure && (
               <div className="mb-3">
                 <button
-                  onClick={() => runCategoryCheck('structure')}
+                  onClick={() => runCategoryCheck("structure")}
                   className="w-full rounded border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                 >
                   Run Structure Checks
@@ -329,7 +322,7 @@ export function AccessibilitySidebar({ className }: AccessibilitySidebarProps) {
             {violations.structure.map(
               (violation: AccessibilityViolationProps, index) => (
                 <AccessibilityViolation key={index} {...violation} />
-              ),
+              )
             )}
           </AccessibilityCategory>
         </div>
