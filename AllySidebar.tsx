@@ -460,7 +460,7 @@ const PlayIcon = ({ loading }: { loading?: boolean }) => (
 
 export function AllySidebar({ className }: AccessibilitySidebarProps) {
   const [hasMounted, setHasMounted] = useState(false);
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
   const [violations, setViolations] = useState<AccessibilityReport>({
     aria: [],
     structure: [],
@@ -531,12 +531,29 @@ export function AllySidebar({ className }: AccessibilitySidebarProps) {
     >
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="absolute -left-[30px] top-[84px] flex items-center justify-center rounded-l-lg bg-black shadow-lg text-white transition-colors px-10 py-2"
+        className="absolute -left-[38px] top-[84px] flex items-center justify-center rounded-l-lg bg-black shadow-lg text-white transition-colors px-10 py-2"
         aria-label={
           isOpen ? "Close accessibility sidebar" : "Open accessibility sidebar"
         }
       >
-        {isOpen ? ">" : "<"}
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <circle cx="12" cy="12" r="10" />
+          <path d="m4.93 4.93 4.24 4.24" />
+          <path d="m14.83 9.17 4.24-4.24" />
+          <path d="m14.83 14.83 4.24 4.24" />
+          <path d="m9.17 14.83-4.24 4.24" />
+          <circle cx="12" cy="12" r="4" />
+        </svg>
       </button>
 
       <div className="h-full overflow-hidden bg-white shadow-xl w-96">
