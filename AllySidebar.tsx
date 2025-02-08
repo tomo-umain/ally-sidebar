@@ -84,19 +84,6 @@ const checkAccessibility = (
       }
     });
 
-    images.forEach((img) => {
-      if (!img.hasAttribute("alt")) {
-        issues.aria.push({
-          severity: "error",
-          message: "Image missing alt text",
-          element: "<img>",
-          innerHTML: img.innerHTML,
-          impact: "Critical - Screen readers cannot describe the image",
-          help: "Add alt attribute to provide image description",
-        });
-      }
-    });
-
     formControls.forEach((input) => {
       const hasLabel = labels.some((label) => label.htmlFor === input.id);
 
@@ -108,6 +95,36 @@ const checkAccessibility = (
           innerHTML: input.innerHTML,
           impact: "Critical - Screen readers cannot identify the input purpose",
           help: 'Add a label element with matching "for" attribute or aria-label',
+        });
+      }
+    });
+
+    images.forEach((img) => {
+      if (!img.hasAttribute("alt")) {
+        issues.aria.push({
+          severity: "warning",
+          message: "Image missing alt text",
+          element: "<img>",
+          innerHTML: img.innerHTML,
+          impact: "Critical - Screen readers cannot describe the image",
+          help: "Add alt attribute to provide image description",
+        });
+      }
+    });
+
+    const focusableElements = document.querySelectorAll(
+      "a, button, input, select, textarea"
+    );
+    focusableElements.forEach((element) => {
+      const el = element as HTMLElement;
+      if (el.tabIndex < 0) {
+        issues.aria.push({
+          severity: "warning",
+          message: "Element not focusable via keyboard",
+          element: `<${el.tagName.toLowerCase()}>`,
+          innerHTML: el.innerHTML,
+          impact: "Critical - Element cannot be accessed via keyboard",
+          help: "Ensure element is focusable via keyboard",
         });
       }
     });
@@ -135,6 +152,25 @@ const checkAccessibility = (
             }, found h${currentLevel}`,
           });
         }
+      }
+    });
+
+    // Batch check for missing landmarks
+    const landmarks = Array.from(
+      document.querySelectorAll("header, main, nav, aside, footer")
+    );
+
+    const landmarkNames = ["header", "main", "nav", "footer"];
+
+    landmarkNames.forEach((landmark, index) => {
+      if (!landmarks.some((el) => el.tagName.toLowerCase() === landmark)) {
+        issues.structure.push({
+          severity: "warning",
+          message: "Missing landmark region",
+          element: `<${landmark}>`,
+          impact: "Moderate - Screen readers may not navigate correctly",
+          help: `Add a <${landmark}> element to define the region`,
+        });
       }
     });
   }
@@ -264,7 +300,27 @@ export function AllySidebar({ className }: AccessibilitySidebarProps) {
 
       <div className="h-full overflow-hidden bg-white shadow-xl w-96">
         <div className="border-b border-gray-200 bg-gray-50/50 p-4">
-          <h2 className="font-semibold">Accessibility Issues</h2>
+          <h1 className="font-semibold text-lg flex gap-2 items-center">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <circle cx="12" cy="12" r="10" />
+              <path d="m4.93 4.93 4.24 4.24" />
+              <path d="m14.83 9.17 4.24-4.24" />
+              <path d="m14.83 14.83 4.24 4.24" />
+              <path d="m9.17 14.83-4.24 4.24" />
+              <circle cx="12" cy="12" r="4" />
+            </svg>{" "}
+            ally-sidebar
+          </h1>
           {Object.values(hasRun).some(Boolean) && (
             <p className="mt-1 text-sm text-gray-600">
               {hasRun && (
