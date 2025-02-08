@@ -206,7 +206,7 @@ export function AccessibilityCategory({
   );
 }
 
-export function AccessibilitySidebar({ className }: AccessibilitySidebarProps) {
+export function AllySidebar({ className }: AccessibilitySidebarProps) {
   const [isOpen, setIsOpen] = useState(true);
   const [violations, setViolations] = useState<AccessibilityReport>({
     aria: [],
